@@ -101,6 +101,35 @@ void enterGraph() {
     return;
 }
 
+void quitProgram() {
+    printf("Quitting program...");
+    if(resource != NULL)
+        free(resource);
+    if(available != NULL)
+        free(available);
+    if(maxclaim != NULL) {
+        for (int i = 0; i < numProcesses; i++) {
+            if (maxclaim[i] != NULL)
+                free(maxclaim[i]);
+        }
+        free(maxclaim);
+    }
+    if(allocated != NULL) {
+        for (int i = 0; i < numProcesses; i++) {
+            if (allocated[i] != NULL)
+                free(allocated[i]);
+        }
+        free(allocated);
+    }
+    if(need != NULL) {
+        for (int i = 0; i < numProcesses; i++) {
+            if (need[i] != NULL)
+                free(need[i]);
+        }
+        free(need);
+    }
+}
+
 int main(void)
 {
     int choice;
@@ -130,7 +159,7 @@ int main(void)
                 printf("\nDetermine safe sequence");
                 break;
             case 5:
-                printf("\nQuitting program");
+                quitProgram();
                 break;
             default:
                 printf("\nINVALID Input, try again");
