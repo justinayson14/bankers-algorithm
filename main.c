@@ -41,7 +41,7 @@ void prtMatrix(int **matrix, char *title) {
     }
 }
 
-// TODO: Finish up option 1
+// Option 1
 void enterGraph() {
     printf("Enter number of resources: ");
     scanf("%d", &numResources);
@@ -101,6 +101,64 @@ void enterGraph() {
     return;
 }
 
+void reqResource() {
+    int selProc = 0;
+    int selRes = 0;
+    int numReq = 0;
+
+    printf("Enter requesting process: p");
+    scanf("%d", &selProc);
+    while(getchar() != '\n');
+    printf("Enter requested resource: r");
+    scanf("%d", &selRes);
+    while(getchar() != '\n');
+    printf("Enter num of units process p%d is requesting from resource r%d: ", selProc, selRes);
+    scanf("%d", &numReq);
+    while(getchar() != '\n');
+
+    if(available[selRes] >= numReq && numReq < need[selProc][selRes]) {
+        available[selRes] -= numReq;
+        allocated[selProc][selRes] += numReq;
+        need[selProc][selRes] -= numReq;
+
+        prtVector(available, titles[1]);
+        prtMatrix(allocated, titles[3]);
+        prtMatrix(need, titles[4]);
+    } else {
+        printf("ERROR: Request denied!");
+    }
+    return;
+}
+
+void releaseResource() {
+    int selProc = 0;
+    int selRes = 0;
+    int numRel = 0;
+
+    printf("Enter releasing processor: p");
+    scanf("%d", &selProc);
+    while(getchar() != '\n');
+    printf("Enter released resource: r");
+    scanf("%d", &selRes);
+    while(getchar() != '\n');
+    printf("Enter num of units process p%d is releasing from resource r%d: ", selProc, selRes);
+    scanf("%d", &numRel);
+    while(getchar() != '\n');
+
+    if(allocated[selRes] >= numRel) {
+        available[selRes] += numRel;
+        allocated[selProc][selRes] -= numRel;
+        need[selProc][selRes] += numRel;
+
+        prtVector(available, titles[1]);
+        prtMatrix(allocated, titles[3]);
+        prtMatrix(need, titles[4]);
+    } else {
+        printf("ERROR: Release denied!");
+    }
+    return;
+}
+
 void quitProgram() {
     printf("Quitting program...");
     if(resource != NULL)
@@ -128,6 +186,7 @@ void quitProgram() {
         }
         free(need);
     }
+    return;
 }
 
 int main(void)
@@ -150,10 +209,10 @@ int main(void)
                 enterGraph();
                 break;
             case 2:
-                printf("\nRequest resource");
+                reqResource();
                 break;
             case 3:
-                printf("\nRelease resource");
+                releaseResource();
                 break;
             case 4:
                 printf("\nDetermine safe sequence");
