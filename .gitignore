@@ -1,3 +1,7 @@
+# Others
+.vscode/
+main
+
 # Prerequisites
 *.d
 
