@@ -148,7 +148,7 @@ void releaseResource() {
     scanf("%d", &numRel);
     while(getchar() != '\n');
 
-    if(allocated[selRes] >= numRel) {
+    if(allocated[selProc][selRes] >= numRel) {
         available[selRes] += numRel;
         allocated[selProc][selRes] -= numRel;
         need[selProc][selRes] += numRel;
@@ -164,12 +164,13 @@ void releaseResource() {
 
 // Option 4
 void determSafeSeq() {
-    int* safeSeq = (int*)calloc(numProcesses, sizeof(int));
-    int countFin = 0;
+    int* finish = (int*)calloc(numProcesses, sizeof(int));
+    int* safeSeq = (int*)malloc(numProcesses * sizeof(int));
+    int count = 0;
 
-    while(countFin < numProcesses) {
+    while(count < numProcesses) {
         for(int i = 0; i < numProcesses; i++) {
-            if(safeSeq[i] == 0) {
+            if(finish[i] == 0) {
                 printf("Comparing: < ");
                 for(int j = 0; j < numResources; j++) {
                     printf("%d ", need[i][j]);
@@ -179,18 +180,35 @@ void determSafeSeq() {
                     printf("%d ", available[j]);
                 }
                 printf("> : ");
-                bool allAvail = true;
+                bool isAvail = true;
                 for(int j = 0; j < numResources; j++) {
                     if(available[j] < need[i][j]) {
-                        printf("Process p%d can't be sequenced", i);
-                        allAvail = false;
+                        printf("Process p%d can't be sequenced\n", i);
+                        isAvail = false;
+                        break;
                     }
                 }
-                
+                if(isAvail) {
+                    printf("Process p%d can be sequenced\n", i);
+                    for(int j = 0; j < numResources; j++)
+                        available[j] += allocated[i][j];
+                    finish[i] = 1;
+                    safeSeq[count] = i;
+                    count++;
+                }
             }
         }
+        if(count == 0) {
+            printf("System is in deadlock!");
+            free(finish);
+            free(safeSeq);
+            return;
+        }
     }
-
+    printf("Safe sequence of processes:");
+    for(int i = 0; i < numProcesses; i++) 
+        printf("p%d ", safeSeq[i]);
+    free(finish);
     free(safeSeq);
     return;
 }
@@ -252,7 +270,7 @@ int main(void)
                 releaseResource();
                 break;
             case 4:
-                printf("\nDetermine safe sequence");
+                determSafeSeq();
                 break;
             case 5:
                 quitProgram();
@@ -262,6 +280,5 @@ int main(void)
                 break;
         }
     } while (choice != 5);
-    
     return 0;
 }
