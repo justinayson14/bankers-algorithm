@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 // Declare dynamic arrays/vectors and global variables
 int numResources = 0;
@@ -101,6 +102,7 @@ void enterGraph() {
     return;
 }
 
+// Option 2
 void reqResource() {
     int selProc = 0;
     int selRes = 0;
@@ -130,6 +132,7 @@ void reqResource() {
     return;
 }
 
+// Option 3
 void releaseResource() {
     int selProc = 0;
     int selRes = 0;
@@ -159,6 +162,40 @@ void releaseResource() {
     return;
 }
 
+// Option 4
+void determSafeSeq() {
+    int* safeSeq = (int*)calloc(numProcesses, sizeof(int));
+    int countFin = 0;
+
+    while(countFin < numProcesses) {
+        for(int i = 0; i < numProcesses; i++) {
+            if(safeSeq[i] == 0) {
+                printf("Comparing: < ");
+                for(int j = 0; j < numResources; j++) {
+                    printf("%d ", need[i][j]);
+                }
+                printf("> <= < ");
+                for(int j = 0; j < numResources; j++) {
+                    printf("%d ", available[j]);
+                }
+                printf("> : ");
+                bool allAvail = true;
+                for(int j = 0; j < numResources; j++) {
+                    if(available[j] < need[i][j]) {
+                        printf("Process p%d can't be sequenced", i);
+                        allAvail = false;
+                    }
+                }
+                
+            }
+        }
+    }
+
+    free(safeSeq);
+    return;
+}
+
+// Option 5
 void quitProgram() {
     printf("Quitting program...");
     if(resource != NULL)
